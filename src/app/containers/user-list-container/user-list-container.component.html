@@ -1,0 +1,128 @@
+<div class="user-list-container">
+  <!-- Header Section -->
+  <div class="user-list-container__header">
+    <div class="user-list-container__title-section">
+      <h1 class="user-list-container__title">User Management</h1>
+      <p class="user-list-container__subtitle">Manage system users and their permissions</p>
+    </div>
+
+    <div class="user-list-container__header-actions">
+      <app-button
+        variant="primary"
+        (clicked)="onCreateUser()"
+        [disabled]="(isGlobalLoading$ | async) || false">
+        + Create User
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="user-list-container__filters">
+    <div class="user-list-container__search">
+      <app-search-bar
+        placeholder="Search users by name or email..."
+        [disabled]="(loading$ | async) || false"
+        (searchChange)="onSearchChange($event)">
+      </app-search-bar>
+    </div>
+
+    <div class="user-list-container__filter-controls">
+      <div class="user-list-container__filter-group">
+        <label for="roleFilter" class="user-list-container__filter-label">Role:</label>
+        <select
+          id="roleFilter"
+          class="user-list-container__filter-select"
+          [disabled]="(loading$ | async) || false"
+          (change)="onRoleFilterChange(($any($event.target)).value)">
+          <option value="">All Roles</option>
+          <option *ngFor="let role of userRoles" [value]="role">
+            {{ role | titlecase }}
+          </option>
+        </select>
+      </div>
+
+      <div class="user-list-container__filter-group">
+        <label for="statusFilter" class="user-list-container__filter-label">Status:</label>
+        <select
+          id="statusFilter"
+          class="user-list-container__filter-select"
+          [disabled]="(loading$ | async) || false"
+          (change)="onStatusFilterChange(($any($event.target)).value)">
+          <option value="">All Status</option>
+          <option [value]="true">Active</option>
+          <option [value]="false">Inactive</option>
+        </select>
+      </div>
+
+      <app-button
+        *ngIf="hasActiveFilters"
+        variant="secondary"
+        size="small"
+        [disabled]="(loading$ | async) || false"
+        (clicked)="onClearFilters()">
+        Clear Filters
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="user-list-container__content">
+    <!-- Form Section -->
+    <div class="user-list-container__form" *ngIf="showForm">
+      <app-user-form
+        [user]="selectedUser || undefined"
+        [loading]="(isFormLoading | async) || false"
+        [submitButtonText]="selectedUser ? 'Update User' : 'Create User'"
+        (formSubmit)="onFormSubmit($event)"
+        (formCancel)="onFormCancel()">
+      </app-user-form>
+    </div>
+
+    <!-- Users Grid -->
+    <div class="user-list-container__grid" *ngIf="!showForm">
+      <!-- Loading State -->
+      <div class="user-list-container__loading" *ngIf="(loading$ | async) === true">
+        <div class="user-list-container__spinner">
+          <div class="spinner"></div>
+        </div>
+        <p>Loading users...</p>
+      </div>
+
+      <!-- Users List -->
+      <div class="user-list-container__users" *ngIf="(loading$ | async) !== true">
+        <ng-container *ngIf="(users$ | async) as users">
+          <!-- Empty State -->
+          <div class="user-list-container__empty" *ngIf="users.length === 0">
+            <div class="user-list-container__empty-icon">👥</div>
+            <h3 class="user-list-container__empty-title">
+              {{ hasActiveFilters ? 'No users match your filters' : 'No users found' }}
+            </h3>
+            <p class="user-list-container__empty-description">
+              {{ hasActiveFilters
+                ? 'Try adjusting your search criteria or clear the filters.'
+                : 'Get started by creating your first user.' }}
+            </p>
+            <app-button
+              *ngIf="!hasActiveFilters"
+              variant="primary"
+              (clicked)="onCreateUser()">
+              Create First User
+            </app-button>
+          </div>
+
+          <!-- Users Grid -->
+          <div class="user-list-container__cards" *ngIf="users.length > 0">
+            <app-user-card
+              *ngFor="let user of users"
+              [user]="user"
+              [loading]="(isUserLoading(user.id) | async) || false"
+              (edit)="onEditUser($event)"
+              (delete)="onDeleteUser($event)"
+              (toggleStatus)="onToggleUserStatus($event)">
+            </app-user-card>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

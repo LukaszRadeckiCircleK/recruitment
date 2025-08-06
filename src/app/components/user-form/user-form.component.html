@@ -1,0 +1,118 @@
+<div class="user-form">
+  <div class="user-form__header">
+    <h2 class="user-form__title">{{ formTitle }}</h2>
+  </div>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form__form">
+    <div class="user-form__row">
+      <div class="user-form__field">
+        <label for="firstName" class="user-form__label">
+          First Name <span class="user-form__required">*</span>
+        </label>
+        <input
+          id="firstName"
+          type="text"
+          class="user-form__input"
+          [class.user-form__input--error]="getFieldError('firstName')"
+          formControlName="firstName"
+          placeholder="Enter first name"
+          [disabled]="loading"
+        />
+        <div class="user-form__error" *ngIf="getFieldError('firstName')">
+          {{ getFieldError('firstName') }}
+        </div>
+      </div>
+
+      <div class="user-form__field">
+        <label for="lastName" class="user-form__label">
+          Last Name <span class="user-form__required">*</span>
+        </label>
+        <input
+          id="lastName"
+          type="text"
+          class="user-form__input"
+          [class.user-form__input--error]="getFieldError('lastName')"
+          formControlName="lastName"
+          placeholder="Enter last name"
+          [disabled]="loading"
+        />
+        <div class="user-form__error" *ngIf="getFieldError('lastName')">
+          {{ getFieldError('lastName') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="user-form__field">
+      <label for="email" class="user-form__label">
+        Email <span class="user-form__required">*</span>
+      </label>
+      <input
+        id="email"
+        type="email"
+        class="user-form__input"
+        [class.user-form__input--error]="getFieldError('email')"
+        formControlName="email"
+        placeholder="Enter email address"
+        [disabled]="loading"
+      />
+      <div class="user-form__error" *ngIf="getFieldError('email')">
+        {{ getFieldError('email') }}
+      </div>
+    </div>
+
+    <div class="user-form__field">
+      <label for="role" class="user-form__label">
+        Role <span class="user-form__required">*</span>
+      </label>
+      <select
+        id="role"
+        class="user-form__select"
+        [class.user-form__select--error]="getFieldError('role')"
+        formControlName="role"
+        [disabled]="loading"
+      >
+        <option value="" disabled>Select a role</option>
+        <option *ngFor="let role of userRoles" [value]="role">
+          {{ getRoleDisplayName(role) }}
+        </option>
+      </select>
+      <div class="user-form__error" *ngIf="getFieldError('role')">
+        {{ getFieldError('role') }}
+      </div>
+    </div>
+
+    <div class="user-form__field" *ngIf="isEditMode">
+      <label class="user-form__checkbox-container">
+        <input
+          type="checkbox"
+          class="user-form__checkbox"
+          formControlName="isActive"
+          [disabled]="loading"
+        />
+        <span class="user-form__checkbox-label">Active User</span>
+        <span class="user-form__checkbox-description">
+          When unchecked, the user will not be able to access the system
+        </span>
+      </label>
+    </div>
+
+    <div class="user-form__actions">
+      <app-button
+        *ngIf="showCancelButton"
+        type="button"
+        variant="secondary"
+        [disabled]="loading"
+        (clicked)="onCancel()">
+        Cancel
+      </app-button>
+
+      <app-button
+        type="submit"
+        variant="primary"
+        [loading]="loading"
+        [disabled]="userForm.invalid">
+        {{ submitButtonText }}
+      </app-button>
+    </div>
+  </form>
+</div>
