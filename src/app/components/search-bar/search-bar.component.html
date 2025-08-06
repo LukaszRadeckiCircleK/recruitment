@@ -1,0 +1,26 @@
+<div class="search-bar">
+  <div class="search-bar__container">
+    <span class="search-bar__icon search-bar__icon--search">
+      🔍
+    </span>
+
+    <input
+      type="text"
+      class="search-bar__input"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [formControl]="searchControl"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+    />
+
+    <button
+      *ngIf="clearable && hasValue"
+      type="button"
+      class="search-bar__clear"
+      (click)="onClear()"
+      aria-label="Clear search">
+      <span class="search-bar__icon">✕</span>
+    </button>
+  </div>
+</div>
