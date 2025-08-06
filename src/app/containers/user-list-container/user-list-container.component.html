@@ -1,0 +1,30 @@
+<div class="user-list-container">
+  <!-- Filters Section -->
+  <div class="user-list-container__filters">
+    <div class="user-list-container__search">
+      <app-search-bar
+        placeholder="Search users by name or email..."
+        [disabled]="(loading | async) || false"
+        (searchChange)="onSearchChange($event)">
+      </app-search-bar>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="user-list-container__content">
+    <h2>{{ usersTitleFormatter(users.length) }}</h2>
+      <!-- Users List -->
+      <div class="user-list-container__users" *ngIf="(loading | async) !== true">
+        <ng-container *ngIf="(users | async) as users">
+          <div class="user-list-container__cards" *ngIf="users.length > 0">
+            <app-user-card
+              *ngFor="let user of users"
+              [user]="user"
+            >
+            </app-user-card>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
